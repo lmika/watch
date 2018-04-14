@@ -46,7 +46,7 @@ func (uc *UICtx) formatTitle() string {
 		return lastSnapshot.Command
 	}
 
-	return ""
+	return uc.Sampler.Command
 }
 
 // format the date
