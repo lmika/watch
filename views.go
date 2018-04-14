@@ -7,7 +7,7 @@ import (
 	"github.com/willf/pad"
 )
 
-func titleView(uictx *UiCtx, g *gocui.Gui, maxX, maxY int) error {
+func titleView(uictx *UICtx, g *gocui.Gui, maxX, maxY int) error {
 	v, err := g.SetView("title", -1, -1, maxX, 1)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
@@ -35,7 +35,7 @@ func titleView(uictx *UiCtx, g *gocui.Gui, maxX, maxY int) error {
 	return nil
 }
 
-func outputView(uictx *UiCtx, g *gocui.Gui, maxX, maxY int) error {
+func outputView(uictx *UICtx, g *gocui.Gui, maxX, maxY int) error {
 	v, err := g.SetView("output", -1, 1, maxX, maxY)
 	if err != nil {
 		if err != gocui.ErrUnknownView {

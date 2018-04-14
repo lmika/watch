@@ -8,15 +8,16 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-// UI Context manages the UI
-type UiCtx struct {
+// UICtx Context manages the UI
+type UICtx struct {
 	Sampler *Sampler
 	Gui     *gocui.Gui
 
 	errCol func(s string) string
 }
 
-func (uc *UiCtx) Init() {
+// Init initialises the UI context
+func (uc *UICtx) Init() {
 	uc.Gui.SetManagerFunc(uc.LayoutFn)
 
 	uc.Sampler.OnSampled = uc.Update
@@ -24,8 +25,8 @@ func (uc *UiCtx) Init() {
 	uc.errCol = ansi.ColorFunc("red")
 }
 
-// UpdateFn is the update function for gocui
-func (uc *UiCtx) LayoutFn(g *gocui.Gui) error {
+// LayoutFn is the update function for gocui
+func (uc *UICtx) LayoutFn(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
 	titleView(uc, g, maxX, maxY)
@@ -35,12 +36,12 @@ func (uc *UiCtx) LayoutFn(g *gocui.Gui) error {
 }
 
 // Update requests an update
-func (uc *UiCtx) Update() {
+func (uc *UICtx) Update() {
 	uc.Gui.Update(uc.LayoutFn)
 }
 
 // format the title
-func (uc *UiCtx) formatTitle() string {
+func (uc *UICtx) formatTitle() string {
 	if lastSnapshot := uc.Sampler.LastSnapshot(); lastSnapshot != nil {
 		return lastSnapshot.Command
 	}
@@ -49,7 +50,7 @@ func (uc *UiCtx) formatTitle() string {
 }
 
 // format the date
-func (uc *UiCtx) formatDate() string {
+func (uc *UICtx) formatDate() string {
 	if lastSnapshot := uc.Sampler.LastSnapshot(); lastSnapshot != nil {
 		return fmt.Sprintf("%s (every %.1f sec)",
 			lastSnapshot.Started.Format("2006-01-02 15:04:05"), uc.Sampler.Interval.Seconds())

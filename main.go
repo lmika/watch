@@ -40,7 +40,7 @@ func main() {
 	sampler.Init()
 
 	// Setup the UI
-	uiCtx := &UiCtx{
+	uiCtx := &UICtx{
 		Sampler: sampler,
 		Gui:     g,
 	}
