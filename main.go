@@ -19,6 +19,7 @@ func init() {
 }
 
 func main() {
+	waitSec := flag.Int("s", 2, "Wait time between updates")
 	flag.Parse()
 
 	if flag.NArg() == 0 {
@@ -35,7 +36,7 @@ func main() {
 	// Setup the sampler
 	sampler := &Sampler{
 		Command:  strings.Join(flag.Args(), " "),
-		Interval: 2 * time.Second,
+		Interval: time.Duration(*waitSec) * time.Second,
 	}
 	sampler.Init()
 
