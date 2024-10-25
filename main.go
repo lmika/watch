@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/lmika/gopkgs/fp/slices"
 	"log"
+	"mvdan.cc/sh/v3/syntax"
 	"os"
 	"strings"
 	"time"
@@ -27,6 +29,13 @@ func main() {
 		os.Exit(2)
 	}
 
+	quotedCli, err := slices.MapWithError(flag.Args(), func(s string) (string, error) {
+		return syntax.Quote(s, syntax.LangBash)
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		log.Panicln(err)
@@ -35,7 +44,7 @@ func main() {
 
 	// Setup the sampler
 	sampler := &Sampler{
-		Command:  strings.Join(flag.Args(), " "),
+		Command:  strings.Join(quotedCli, " "),
 		Interval: time.Duration(*waitSec) * time.Second,
 	}
 	sampler.Init()
