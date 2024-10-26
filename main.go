@@ -62,6 +62,27 @@ func main() {
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		log.Panicln(err)
 	}
+	if err := g.SetKeybinding("", 's', gocui.ModNone, func(gui *gocui.Gui, view *gocui.View) error {
+		sampler.SaveSnapshot()
+
+		uiCtx.Message = "Snapshot saved"
+		uiCtx.Update()
+		return nil
+	}); err != nil {
+		log.Panicln(err)
+	}
+	if err := g.SetKeybinding("", 'q', gocui.ModNone, func(gui *gocui.Gui, view *gocui.View) error {
+		uiCtx.CycleSnapshots(-1)
+		return nil
+	}); err != nil {
+		log.Panicln(err)
+	}
+	if err := g.SetKeybinding("", 'Q', gocui.ModNone, func(gui *gocui.Gui, view *gocui.View) error {
+		uiCtx.CycleSnapshots(1)
+		return nil
+	}); err != nil {
+		log.Panicln(err)
+	}
 
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)

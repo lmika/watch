@@ -49,10 +49,17 @@ func outputView(uictx *UICtx, g *gocui.Gui, maxX, maxY int) error {
 	var rows []Line
 	var lastLine string
 
-	if lastSnapshot := uictx.Sampler.LastSnapshot(); lastSnapshot != nil {
-		rows = lastSnapshot.Lines
-		if lastSnapshot.Err != nil {
-			lastLine = uictx.errCol(fmt.Sprintf("error: %v", lastSnapshot.Err))
+	var snapshot *Snapshot
+	if uictx.VisibleSavedSnapshot >= 0 {
+		snapshot = uictx.Sampler.SavedSnapshot(uictx.VisibleSavedSnapshot)
+	} else {
+		snapshot = uictx.Sampler.LastSnapshot()
+	}
+
+	if snapshot != nil {
+		rows = snapshot.Lines
+		if snapshot.Err != nil {
+			lastLine = uictx.errCol(fmt.Sprintf("error: %v", snapshot.Err))
 		}
 	}
 

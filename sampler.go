@@ -18,8 +18,9 @@ type Sampler struct {
 	// OnSampled is called when a new sample is available
 	OnSampled func()
 
-	lastSnapshot  *Snapshot
-	snapshotMutex *sync.RWMutex
+	lastSnapshot   *Snapshot
+	savedSnapshots []*Snapshot
+	snapshotMutex  *sync.RWMutex
 }
 
 // Init initialises the sampler
@@ -76,12 +77,43 @@ func (s *Sampler) SampleNow() {
 	}
 }
 
+func (s *Sampler) SaveSnapshot() {
+	snaphot := s.sample(s.Command)
+	s.pushAnsSaveSnapshot(snaphot)
+
+	if s.OnSampled != nil {
+		s.OnSampled()
+	}
+}
+
+func (s *Sampler) NSavedSnapshot() int {
+	s.snapshotMutex.RLock()
+	defer s.snapshotMutex.RUnlock()
+
+	return len(s.savedSnapshots)
+}
+
+func (s *Sampler) SavedSnapshot(i int) *Snapshot {
+	s.snapshotMutex.RLock()
+	defer s.snapshotMutex.RUnlock()
+
+	return s.savedSnapshots[i]
+}
+
 func (s *Sampler) pushSnapshot(newSnapshot *Snapshot) {
 	s.snapshotMutex.Lock()
 	defer s.snapshotMutex.Unlock()
 
 	// TODO: Allow some historical analysis of snapshots
 	s.lastSnapshot = newSnapshot
+}
+
+func (s *Sampler) pushAnsSaveSnapshot(newSnapshot *Snapshot) {
+	s.snapshotMutex.Lock()
+	defer s.snapshotMutex.Unlock()
+
+	s.lastSnapshot = newSnapshot
+	s.savedSnapshots = append(s.savedSnapshots, newSnapshot)
 }
 
 func (s *Sampler) sample(command string) *Snapshot {
